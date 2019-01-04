@@ -1,25 +1,34 @@
-import React,{Component} from "react";
+import React, { Component } from "react";
 import PropTypes from 'prop-types';
 
-class ChannelForm extends Component{
-    onSubmit(e){
+class ChannelForm extends Component {
+    onSubmit(e) {
         e.preventDefault();
-        const node=this.refs.channel;
-        const name=node.value;
+        const node = this.refs.channel;
+        const name = node.value;
         this.props.addChannel(name);
-        node.value='';
+        node.value = '';
     }
-    render(){
-        return(
+    render() {
+        return (
             <form onSubmit={this.onSubmit.bind(this)}>
-                <input type="text" ref='channel'/>
+                <div className='form-group'>
+                    <input
+                        className='form-control'
+                        placeholder='Add Channel'
+                        type='text'
+                        ref='channel'
+                    />
+                </div>
+
             </form>
+
         )
     }
 }
 
-ChannelForm.propTypes={
-    addChannel:PropTypes.func.isRequired
+ChannelForm.propTypes = {
+    addChannel: PropTypes.func.isRequired
 }
 
 export default ChannelForm;
