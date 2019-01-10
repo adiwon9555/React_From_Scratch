@@ -23,8 +23,7 @@ class MessageList extends Component{
 }
 
 MessageList.propTypes={
-    messages:PropTypes.array.isRequired,
-
+    messages:PropTypes.array.isRequired
 }
 
 export default MessageList;

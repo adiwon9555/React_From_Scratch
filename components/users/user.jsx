@@ -20,7 +20,7 @@ class User extends Component{
     }
 }
 
-user.propTypes={
+User.propTypes={
     user:PropTypes.object.isRequired,
     setUser:PropTypes.func.isRequired,
     activeUser:PropTypes.object.isRequired

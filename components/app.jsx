@@ -47,9 +47,9 @@ class App extends Component {
         var activeUser=user;
         this.setState({activeUser});
     }
-    addMessage(name) {
+    addMessage(body) {
         const { messages,users } = this.state;
-        const createdAt=new Date();
+        const createdAt=new Date().toLocaleString();
         const author=users.length!=0?users[0].name:'anonymous'; 
         messages.push({ body, id: messages.length,createdAt,author });
         this.setState({ messages });
@@ -65,15 +65,15 @@ class App extends Component {
                     />
                     <UserSection
                         {...this.state}
-                        addUser={this.addUser.bind(this)}
+                        setUserName={this.setUserName.bind(this)}
                         setUser={this.setUser.bind(this)}
                     />
-                    <MessageSection
+                    
+                </div>
+                <MessageSection
                         {...this.state}
                         addMessage={this.addMessage.bind(this)}
-                        setMessage={this.setMessage.bind(this)}
                     />
-                </div>
             </div>
 
         )

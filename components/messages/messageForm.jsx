@@ -12,7 +12,7 @@ class MessageForm extends Component {
     render() {
         let input;
         const {activeChannel}=this.props;
-        if(activeChannel!==undefined)
+        if(activeChannel.id!==undefined)
         {
             input=(
                 <input
