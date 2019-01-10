@@ -14,6 +14,10 @@ class Socket{
     off(name,fn){
         this.ee.removeListener(name,fn);
     }
+    emit(name,data){
+        const message=JSON.stringify({name,data})
+        this.ws.send(message);
+    }
     message(e){
         try {
             const event=JSON.parse(e.data);

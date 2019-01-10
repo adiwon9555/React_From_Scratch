@@ -1,8 +1,11 @@
 import React, { Component } from "react";
 import ChannelSection from './channels/channelSection';
 import UserSection from './users/userSection';
+import Socket from './socket';
+
 import MessageSection from './messages/messageSection';
 import { hot } from "react-hot-loader";
+
 
 class App extends Component {
     constructor(props) {
@@ -12,35 +15,87 @@ class App extends Component {
             activeChannel:{},
             users:[],
             activeUser:{},
-            messages:[]
+            messages:[],
+            connected:false
         };
     }
-    addChannel(name) {
-        const { channels } = this.state;
-        channels.push({ name, id: channels.length});
-        this.setState({ channels });
+    componentDidMount(){
+        let socket=this.socket=new Socket();
+        socket.on('connect',this.onConnect.bind(this));
+        socket.on('disconnect',this.onDisconnect.bind(this));
+        socket.on('channel add',this.onAddChannel.bind(this));
+        socket.on('user remove',this.onRemoveUser.bind(this));
+        socket.on('user edit',this.onEditUser.bind(this));
+        socket.on('user add',this.onAddUser.bind(this));
+        socket.on('message add',this.onAddMessage.bind(this));
+        
 
+    }
+    onAddChannel(channel){
+        const { channels } = this.state;
+        channels.push(channel);
+        this.setState({ channels });
+    }
+    onRemoveUser(user){
+        let { users } = this.state;
+        users=users.filter(u=>u.id!==user.id)
+        this.setState({ users });
+    }
+    onEditUser(user){
+        let { users } = this.state;
+        users=users.map(u=>{
+            if(u.id==user.id){
+                return user;
+            }
+            else{
+                return u;
+            }
+        })
+        this.setState({ users });
+    }
+    onAddUser(user){
+        const { users } = this.state;
+        users.push(user);
+        this.setState({ users });
+    }
+    onAddMessage(message){
+        const { messages } = this.state;
+        messages.push(message);
+        this.setState({ messages });
+    }
+    onConnect(){
+        
+        this.setState({
+            connected:true
+        })
+        this.socket.emit('channel subscribe');
+        this.socket.emit('user subscribe');
+    }
+    onDisconnect(){
+        
+        this.setState({
+            connected:false
+        })
+    }
+    addChannel(name) {
+
+        this.socket.emit('channel add',{name});
     }
     setChannel(channel) {
         console.log(channel.name);
-        // const {channels}=this.state;
-        // var chs=channels.map(c=>{
-        //     if(c.key==channel.key){
-        //         c.active=true;
-        //         return c;
-        //     }else{
-        //         c.active=false;
-        //         return c;
-        //     }
-        // })
         var activeChannel=channel;
         this.setState({activeChannel});
+        
+        this.socket.emit('message unsubscribe');
+        this.setState({messages:[]});
+        this.socket.emit('message subscribe',{
+            channelId:activeChannel.id
+        });
+        
+
     }
     setUserName(name) {
-        const { users } = this.state;
-        users.push({ name, id: users.length });
-        this.setState({ users });
-
+        socket.emit('user edit',{name});
     }
     setUser(user) {
         console.log(user.name);
@@ -48,18 +103,14 @@ class App extends Component {
         this.setState({activeUser});
     }
     addMessage(body) {
-        const { messages,users } = this.state;
-        const createdAt=new Date().toLocaleString();
-        const author=users.length!=0?users[0].name:'anonymous'; 
-        messages.push({ body, id: messages.length,createdAt,author });
-        this.setState({ messages });
+        let {activeChannel}=this.state;
+        this.socket.emit('message add',{channelId:activeChannel.id ,body});
     }
     render() {
         return (
             <div className='app'>
                 <div className='nav'>
-                    <ChannelSection
-                        {...this.state}
+                    <ChannelSection {...this.state}
                         addChannel={this.addChannel.bind(this)}
                         setChannel={this.setChannel.bind(this)}
                     />
