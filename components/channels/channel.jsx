@@ -6,6 +6,8 @@ class Channel extends Component{
         e.preventDefault();
         const {channel,setChannel}=this.props;
         setChannel(channel);
+        // console.log(channel);
+        
 
     }
     render(){

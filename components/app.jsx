@@ -13,6 +13,7 @@ class App extends Component {
         this.state = {
             channels: [],
             activeChannel:{},
+            currentUser:{},
             users:[],
             activeUser:{},
             messages:[],
@@ -20,7 +21,8 @@ class App extends Component {
         };
     }
     componentDidMount(){
-        let socket=this.socket=new Socket();
+        let ws=new WebSocket("ws://localhost:4001")
+        let socket=this.socket=new Socket(ws);
         socket.on('connect',this.onConnect.bind(this));
         socket.on('disconnect',this.onDisconnect.bind(this));
         socket.on('channel add',this.onAddChannel.bind(this));
@@ -54,6 +56,9 @@ class App extends Component {
         this.setState({ users });
     }
     onAddUser(user){
+        this.setState({currentUser:user})
+        // console.log(currentUser);
+        
         const { users } = this.state;
         users.push(user);
         this.setState({ users });
@@ -72,7 +77,7 @@ class App extends Component {
         this.socket.emit('user subscribe');
     }
     onDisconnect(){
-        
+        // this.socket.emit('user unsubscribe',{id:currentUser.id});    
         this.setState({
             connected:false
         })
@@ -86,7 +91,7 @@ class App extends Component {
         var activeChannel=channel;
         this.setState({activeChannel});
         
-        this.socket.emit('message unsubscribe');
+        // this.socket.emit('message unsubscribe');
         this.setState({messages:[]});
         this.socket.emit('message subscribe',{
             channelId:activeChannel.id
@@ -95,7 +100,9 @@ class App extends Component {
 
     }
     setUserName(name) {
-        socket.emit('user edit',{name});
+        let {currentUser}=this.state;
+        currentUser.name=name 
+        this.socket.emit('user edit',currentUser);
     }
     setUser(user) {
         console.log(user.name);
@@ -103,8 +110,8 @@ class App extends Component {
         this.setState({activeUser});
     }
     addMessage(body) {
-        let {activeChannel}=this.state;
-        this.socket.emit('message add',{channelId:activeChannel.id ,body});
+        let {activeChannel,currentUser}=this.state;
+        this.socket.emit('message add',{channelId:activeChannel.id ,body,author:currentUser.name});
     }
     render() {
         return (

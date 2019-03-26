@@ -12,7 +12,7 @@ class MessageList extends Component{
         const {messages}=this.props;
         return(
             <ul>
-                {messages.map(message=>{
+                {messages.sort((a,b)=>a.createdAt-b.createdAt).map(message=>{
                     return <Message message={message} {...this.props} key={message.id}/>
                 })
             }
