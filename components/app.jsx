@@ -13,7 +13,7 @@ class App extends Component {
         this.state = {
             channels: [],
             activeChannel:{},
-            currentUser:{},
+            // currentUser:{},
             users:[],
             activeUser:{},
             messages:[],
@@ -56,7 +56,7 @@ class App extends Component {
         this.setState({ users });
     }
     onAddUser(user){
-        this.setState({currentUser:user})
+        // this.setState({currentUser:user})
         // console.log(currentUser);
         
         const { users } = this.state;
@@ -100,9 +100,9 @@ class App extends Component {
 
     }
     setUserName(name) {
-        let {currentUser}=this.state;
-        currentUser.name=name 
-        this.socket.emit('user edit',currentUser);
+        // let {currentUser}=this.state;
+        // currentUser.name=name 
+        this.socket.emit('user edit',{name});
     }
     setUser(user) {
         console.log(user.name);
@@ -110,8 +110,8 @@ class App extends Component {
         this.setState({activeUser});
     }
     addMessage(body) {
-        let {activeChannel,currentUser}=this.state;
-        this.socket.emit('message add',{channelId:activeChannel.id ,body,author:currentUser.name});
+        let {activeChannel}=this.state;
+        this.socket.emit('message add',{channelId:activeChannel.id ,body});
     }
     render() {
         return (

@@ -1,17 +1,18 @@
 import React,{Component} from "react";
 import PropTypes from 'prop-types';
+import fecha from 'fecha';
 
 class Message extends Component{
    
     render(){
         const {message}=this.props;
-        
+        let createdAt=fecha.format(new Date(message.createdAt),'HH:mm:ss MM/DD/YY')
         return(
             // <li className={this.props.message.active==true?'active':''}>
             <li className="message" >
                 <div className="author">
                     <strong>{message.author}</strong>
-                    <i className="timestamp">{message.createdAt}</i>
+                    <i className="timestamp">{createdAt}</i>
                 </div>
                 <div className="body">
                     {message.body}
